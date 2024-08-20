@@ -70,7 +70,7 @@ const Canvas: React.FC = () => {
   const handleSendPoints = async () => {
     try {
       const response = await axios.post(
-        "http://127.0.0.1:5001/triangulation-visualiser/get-delaunay-edges",
+        "https://home-python-sdk.onrender.com/triangulation-visualiser/get-delaunay-edges",
          points 
       );
       console.log("Processed lines received:", response.data);
