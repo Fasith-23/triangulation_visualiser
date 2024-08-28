@@ -4,6 +4,7 @@ import React, { useRef, useEffect } from "react";
 import * as THREE from "three";
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
+
 interface Point {
   x: number;
   y: number;
@@ -21,7 +22,7 @@ interface ThreeDCanvasProps {
   processedLines: ProcessedLine[];
 }
 
-const normalizeZCoordinates = (zs: number[], targetMin = -175, targetMax = 175) => {
+const normalizeZCoordinates = (zs: number[], targetMin = -250, targetMax = 250) => {
   const minZ = Math.min(...zs);
   const maxZ = Math.max(...zs);
   const meanZ = (minZ + maxZ) / 2;
@@ -34,8 +35,8 @@ const ThreeDCanvas: React.FC<ThreeDCanvasProps> = ({ points, processedLines }) =
   const canvasRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const width = 350;
-    const height = 350;
+    const width = 500;
+    const height = 500;
 
     const meanX = points.reduce((sum, p) => sum + p.x, 0) / points.length;
     const meanY = points.reduce((sum, p) => sum + p.y, 0) / points.length;
@@ -62,12 +63,12 @@ const ThreeDCanvas: React.FC<ThreeDCanvasProps> = ({ points, processedLines }) =
     const normalizedZ = normalizeZCoordinates(allZ);
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xffffff);
+    scene.background = new THREE.Color(0x000000);
 
     const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
-    camera.position.x = 350;
-    camera.position.z = 350;
-    camera.lookAt(0,0,0);
+    camera.position.x = 500;
+    camera.position.z = 500;
+    camera.lookAt(0, 0, 0);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(width, height);
@@ -75,11 +76,16 @@ const ThreeDCanvas: React.FC<ThreeDCanvasProps> = ({ points, processedLines }) =
     if (canvasRef.current) {
       canvasRef.current.appendChild(renderer.domElement);
     }
-      // Rotate the entire scene 45 degrees around the Y-axis
-    scene.rotation.x=-Math.PI/2;
-    const scale = 1;
-    const colors = [0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff];
 
+    // Rotate the entire scene 45 degrees around the Y-axis
+    scene.rotation.x = -Math.PI / 2;
+    const scale = 1;
+
+    // Calculate the minimum z-value to set the projection plane
+    const minZ = Math.min(...normalizedZ);
+    const projectionZ = minZ - 50; // Ensure the projection is below the lowest point
+
+    // Render 3D convex hull points and lines
     centeredPoints.forEach((point, index) => {
       const geometry = new THREE.SphereGeometry(5, 32, 32);
       const material = new THREE.MeshBasicMaterial({ color: "#F92C85" });
@@ -103,6 +109,41 @@ const ThreeDCanvas: React.FC<ThreeDCanvasProps> = ({ points, processedLines }) =
 
       const geometry = new THREE.BufferGeometry().setFromPoints(points);
       const line = new THREE.Line(geometry, material);
+
+      scene.add(line);
+    });
+
+    // Render 2D Delaunay triangulation on projectionZ plane (below the lowest point)
+    centeredLines.forEach(({ x1, y1, x2, y2 }) => {
+      const material = new THREE.LineBasicMaterial({ color: "#FFC7DF" });
+      const points = [];
+
+      points.push(new THREE.Vector3(x1 * scale, y1 * scale, projectionZ * scale));
+      points.push(new THREE.Vector3(x2 * scale, y2 * scale, projectionZ * scale));
+
+      const geometry = new THREE.BufferGeometry().setFromPoints(points);
+      const line = new THREE.Line(geometry, material);
+
+      scene.add(line);
+    });
+
+    // Render projection lines as dotted lines
+    centeredPoints.forEach((point, index) => {
+      const material = new THREE.LineDashedMaterial({
+        color: 0xFFC7DF,
+        dashSize: 3,
+        gapSize: 2,
+      });
+      const points = [];
+
+      const z = normalizedZ[index];
+
+      points.push(new THREE.Vector3(point.x * scale, point.y * scale, projectionZ * scale));
+      points.push(new THREE.Vector3(point.x * scale, point.y * scale, z * scale));
+
+      const geometry = new THREE.BufferGeometry().setFromPoints(points);
+      const line = new THREE.Line(geometry, material);
+      line.computeLineDistances(); // Required for dashed lines
 
       scene.add(line);
     });
