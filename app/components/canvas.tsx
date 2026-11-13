@@ -137,19 +137,19 @@ export default function Canvas() {
 
 
   return (
-    <section className="h-full pt-10">
-      <h1 className="pb-10 text-4xl text-center font-bold text-primary ">
-        <span className="block text-6xl pb-2">Hello,</span>
+    <section className="h-full pt-10 ">
+      <h1 className="pb-10 text-3xl text-center font-bold text-primary ">
+        <span className="block text-5xl pb-1">Hello,</span>
         Visualise your triangles here!
       </h1>
 
       <div className="mx-auto w-full max-w-6xl px-4">
-  <div className="grid grid-cols-1 justify-items-center gap-10 lg:grid-cols-2">
+  <div className="grid grid-cols-1 justify-items-center gap-5 lg:gap-10 lg:grid-cols-2">
     <div className="w-full max-w-[500px]">
-      <p className="pb-1 text-center text-xl font-medium text-primary">
+      <p className="text-center text-xl font-medium text-primary">
         Delaunay Triangulation
       </p>
-      <p className="pb-5 text-center text-md font-light text-primary">
+      <p className="pb-2 text-center text-md font-light text-primary">
         (Tap / Click to Place your points!)
       </p>
 
@@ -196,11 +196,11 @@ export default function Canvas() {
       )}
     </div>
 
-    <div className="w-full max-w-[500px]">
-      <p className="pb-1 text-center text-xl font-medium text-primary">
+    <div className="w-full max-w-[500px] pb-10">
+      <p className=" text-center text-xl font-medium text-primary">
         3D Convex Hull
       </p>
-      <p className="pb-5 text-center text-md font-light text-primary">
+      <p className="pb-2 text-center text-md font-light text-primary">
         (Pinch / Scroll to zoom and Drag to rotate)
       </p>
       <ThreeDCanvas points={points} lines={lines} />
