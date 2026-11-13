@@ -137,79 +137,77 @@ export default function Canvas() {
 
 
   return (
-    <section className="h-full pt-20">
-      <h1 className="pb-10 pl-6 text-3xl font-bold text-primary md:pl-20">
-        <span className="block text-6xl">Hello,</span>
+    <section className="h-full pt-10">
+      <h1 className="pb-10 text-4xl text-center font-bold text-primary ">
+        <span className="block text-6xl pb-2">Hello,</span>
         Visualise your triangles here!
       </h1>
 
-      <div className="">
-        <div className="flex flex-col items-center gap-10 lg:flex-row lg:justify-center">
-          <div>
-            <p className="pb-5 text-center text-xl font-extralight text-primary">
-            Place your points here!
-            </p>
-            <div className="relative h-[500px] w-[500px] max-w-full border-4 border-primary">
-            
-            <canvas
-              ref={lineCanvasRef}
-              width={SIZE}
-              height={SIZE}
-              className="absolute inset-0 h-full w-full bg-black"
-            />
-            <canvas
-              ref={pointCanvasRef}
-              width={SIZE}
-              height={SIZE}
-              className="absolute inset-0 h-full w-full"
-              onClick={handleCanvasClick}
-              aria-label="Point drawing canvas"
-            />
-          </div>
-          </div>
-          <div>
-            <p className="pb-5 text-center text-xl font-extralight text-primary">
-            3D triangulation
-            </p>
-            <ThreeDCanvas points={points} lines={lines} />
-          </div>
-           
-          
-          
-        </div>
+      <div className="mx-auto w-full max-w-6xl px-4">
+  <div className="grid grid-cols-1 justify-items-center gap-10 lg:grid-cols-2">
+    <div className="w-full max-w-[500px]">
+      <p className="pb-1 text-center text-xl font-medium text-primary">
+        Delaunay Triangulation
+      </p>
+      <p className="pb-5 text-center text-md font-light text-primary">
+        (Tap / Click to Place your points!)
+      </p>
 
-          <div className="pt-4 pb-16 flex flex-col items-center gap-2 lg:gap-10 lg:flex-row lg:justify-center">
-            <button
-              type="button"
-              onClick={() => setIsErasing((value) => !value)}
-              aria-pressed={isErasing}
-              className="rounded bg-primary px-4 py-2 text-background"
-            >
-              {isErasing ? "Draw" : "Erase"}
-            </button>
-
-            <button
-              type="button"
-              onClick={handleDeleteAll}
-              className="rounded bg-red-600 px-4 py-2 text-white"
-            >
-              Delete all
-            </button>
-          </div>
-
-          {error && (
-            <p role="alert" className="mt-2 text-red-500">
-              {error}
-            </p>
-          )}
-       
-
-        
-        
-          
-          
-        
+      <div className="relative aspect-square w-full border-4 border-primary">
+        <canvas
+          ref={lineCanvasRef}
+          width={SIZE}
+          height={SIZE}
+          className="absolute inset-0 h-full w-full bg-black"
+        />
+        <canvas
+          ref={pointCanvasRef}
+          width={SIZE}
+          height={SIZE}
+          className="absolute inset-0 h-full w-full"
+          onClick={handleCanvasClick}
+          aria-label="Point drawing canvas"
+        />
       </div>
+
+      <div className="flex flex-wrap pb-5 justify-center gap-20 pt-4">
+        <button
+          type="button"
+          onClick={() => setIsErasing((value) => !value)}
+          aria-pressed={isErasing}
+          className="rounded bg-primary px-4 py-2 text-background"
+        >
+          {isErasing ? "Draw" : "Erase"}
+        </button>
+
+        <button
+          type="button"
+          onClick={handleDeleteAll}
+          className="rounded bg-red-600 px-4 py-2 text-white"
+        >
+          Delete
+        </button>
+      </div>
+
+      {error && (
+        <p role="alert" className="mt-2 text-center text-red-500">
+          {error}
+        </p>
+      )}
+    </div>
+
+    <div className="w-full max-w-[500px]">
+      <p className="pb-1 text-center text-xl font-medium text-primary">
+        3D Convex Hull
+      </p>
+      <p className="pb-5 text-center text-md font-light text-primary">
+        (Pinch / Scroll to zoom and Drag to rotate)
+      </p>
+      <ThreeDCanvas points={points} lines={lines} />
+    </div>
+  </div>
+</div>
+
     </section>
   );
 }
